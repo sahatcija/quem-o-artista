@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Qual é o curso?</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background-color: #333;
+            color: white;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        h1 {
+            color: #f0f0f0;
+            text-shadow: 2px 2px 4px #000;
+        }
+        
+        p {
+            color: #ccc;
+        }
+
+        .game-container {
+            display: grid;
+            grid-template-columns: repeat(3, auto);
+            justify-content: center;
+            gap: 25px;
+            margin: 30px 0;
+            perspective: 1200px;
+        }
+
+        .card {
+            width: 150px;
+            height: 225px;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+        }
+
+        .card.flipped {
+            transform: rotateY(180deg);
+        }
+
+        .card-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .card-face-front {
+            transform: rotateY(180deg);
+        }
+
+        .card-face-back {
+            background-color: #4A90E2;
+        }
+
+        .card-face img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        #resetButton {
+            padding: 12px 25px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            border: none;
+            background-color: #4CAF50;
+            color: white;
+            border-radius: 8px;
+            margin-top: 20px;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+
+        #resetButton:hover {
+            background-color: #45a049;
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Qual é o curso?</h1>
+    <p>Clique em uma carta para virá-la e adivinhe qual é o curso.</p>
+    
+    <div class="game-container">
+        <!-- As cartas serão inseridas aqui pelo JavaScript -->
+    </div>
+    
+    <button id="resetButton">Reiniciar Jogo</button>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const gameContainer = document.querySelector('.game-container');
+            const resetButton = document.getElementById('resetButton');
+
+            // --- ÁREA DE PERSONALIZAÇÃO ---
+            // 1. Edite abaixo com o nome da pessoa e o NOME EXATO do arquivo da imagem
+            //    que você colocou na pasta "images".
+            const cardData = [
+                { name: 'Ana', image: 'images/pessoa1.jpg' },
+                { name: 'Bruno', image: 'images/pessoa2.jpg' },
+                { name: 'Carla', image: 'images/pessoa3.jpg' }, // Pode ser .png, .gif etc.
+                { name: 'Daniel', image: 'images/pessoa4.jpg' },
+                { name: 'Elisa', image: 'images/pessoa5.jpg' },
+                { name: 'Fábio', image: 'images/pessoa6.jpg' }
+            ];
+
+            // 2. Coloque aqui o NOME EXATO do arquivo de imagem para o VERSO da carta.
+            const cardBackImage = 'images/verso_carta.jpg';
+            // --- FIM DA ÁREA DE PERSONALIZAÇÃO ---
+
+            function shuffle(array) {
+                let currentIndex = array.length, randomIndex;
+                while (currentIndex > 0) {
+                    randomIndex = Math.floor(Math.random() * currentIndex);
+                    currentIndex--;
+                    [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
+                }
+                return array;
+            }
+
+            function createCards() {
+                gameContainer.innerHTML = '';
+                const shuffledCards = shuffle([...cardData]);
+                shuffledCards.forEach(data => {
+                    const card = document.createElement('div');
+                    card.classList.add('card');
+                    card.dataset.name = data.name;
+
+                    const cardFaceFront = document.createElement('div');
+                    cardFaceFront.classList.add('card-face', 'card-face-front');
+                    const frontImage = document.createElement('img');
+                    frontImage.src = data.image;
+                    frontImage.alt = data.name;
+                    cardFaceFront.appendChild(frontImage);
+
+                    const cardFaceBack = document.createElement('div');
+                    cardFaceBack.classList.add('card-face', 'card-face-back');
+                    const backImage = document.createElement('img');
+                    backImage.src = cardBackImage;
+                    backImage.alt = 'Verso da Carta';
+                    cardFaceBack.appendChild(backImage);
+
+                    card.appendChild(cardFaceFront);
+                    card.appendChild(cardFaceBack);
+
+                    card.addEventListener('click', () => {
+                        card.classList.toggle('flipped');
+                    });
+
+                    gameContainer.appendChild(card);
+                });
+            }
+
+            resetButton.addEventListener('click', createCards);
+            createCards();
+        });
+    </script>
+
+</body>
+</html>
